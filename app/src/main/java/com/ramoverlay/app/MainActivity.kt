@@ -31,6 +31,19 @@ class MainActivity : Activity() {
             setOnClickListener { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
         })
 
+        fun toggle(title: String, get: () -> Boolean, set: (Boolean) -> Unit) =
+            root.addView(Switch(this).apply {
+                text = title
+                isChecked = get()
+                setOnCheckedChangeListener { _, on ->
+                    set(on)
+                    OverlayService.refresh()
+                }
+            })
+        toggle("Show RAM %", { prefs.showRam }, { prefs.showRam = it })
+        toggle("Show battery %", { prefs.showBattery }, { prefs.showBattery = it })
+        toggle("Show storage %", { prefs.showStorage }, { prefs.showStorage = it })
+
         root.addView(Switch(this).apply {
             text = "Always show (use if the pill never appears)"
             isChecked = prefs.alwaysShow

@@ -22,6 +22,18 @@ class OverlayPrefs(private val ctx: Context) {
         get() = sp.getBoolean("always", false)
         set(v) { sp.edit().putBoolean("always", v).apply() }
 
+    var showRam: Boolean
+        get() = sp.getBoolean("ram", true)
+        set(v) { sp.edit().putBoolean("ram", v).apply() }
+
+    var showBattery: Boolean
+        get() = sp.getBoolean("bat", false)
+        set(v) { sp.edit().putBoolean("bat", v).apply() }
+
+    var showStorage: Boolean
+        get() = sp.getBoolean("sto", false)
+        set(v) { sp.edit().putBoolean("sto", v).apply() }
+
     var bounds: Bounds
         get() {
             if (!sp.contains("x")) return defaultBounds()

@@ -153,6 +153,14 @@ class OverlayService : AccessibilityService() {
         val vis = if (show) View.VISIBLE else View.GONE
         val becameVisible = v.visibility != vis && show
         if (v.visibility != vis) v.visibility = vis
-        if (show && (forceText || becameVisible)) v.setPercent(readRamPercent(this))
+        if (show && (forceText || becameVisible)) {
+            v.setLabel(
+                buildLabel(
+                    if (prefs.showRam) readRamPercent(this) else null,
+                    if (prefs.showBattery) readBatteryPercent(this) else null,
+                    if (prefs.showStorage) readStoragePercent() else null
+                )
+            )
+        }
     }
 }

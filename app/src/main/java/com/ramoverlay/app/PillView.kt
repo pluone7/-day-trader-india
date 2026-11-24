@@ -28,7 +28,8 @@ class PillView(ctx: Context) : FrameLayout(ctx) {
         setTextColor(Color.WHITE)
         gravity = Gravity.CENTER
         typeface = Typeface.DEFAULT_BOLD
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+        maxLines = 1
+        setAutoSizeTextTypeUniformWithConfiguration(8, 14, 1, TypedValue.COMPLEX_UNIT_SP)
         text = "RAM --%"
     }
     private val done = TextView(ctx).apply {
@@ -57,8 +58,8 @@ class PillView(ctx: Context) : FrameLayout(ctx) {
         handle.setOnTouchListener { _, e -> drag(e) { dx, dy -> onResize?.invoke(dx, dy) } }
     }
 
-    fun setPercent(p: Int) {
-        label.text = "RAM $p%"
+    fun setLabel(t: String) {
+        label.text = t
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
