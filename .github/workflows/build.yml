@@ -3,6 +3,8 @@ on:
   push:
     branches: [ram-overlay]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,3 +23,9 @@ jobs:
         with:
           name: ram-overlay-apk
           path: app/build/outputs/apk/debug/*.apk
+      - name: Publish APK to ram-overlay-apk branch
+        run: |
+          mkdir /tmp/out && cp app/build/outputs/apk/debug/app-debug.apk /tmp/out/RamOverlay.apk
+          cd /tmp/out && git init -q -b ram-overlay-apk && git add . \
+            && git -c user.name=ci -c user.email=ci@example.com commit -qm "RamOverlay apk" \
+            && git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" ram-overlay-apk
