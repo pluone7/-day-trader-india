@@ -2,6 +2,9 @@ package com.autotext
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
@@ -39,9 +42,19 @@ class MainActivity : Activity() {
             }
         })
         root.addView(Button(this).apply {
-            text = "Grant permissions (call log + SMS)"
+            text = "Grant permissions (call log + SMS + phone)"
             setOnClickListener {
-                requestPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.SEND_SMS), 1)
+                requestPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE), 1)
+            }
+        })
+        root.addView(Button(this).apply {
+            text = "Allow background running (battery)"
+            setOnClickListener {
+                try {
+                    startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName")))
+                } catch (e: Exception) {
+                    startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+                }
             }
         })
         root.addView(Button(this).apply {
@@ -77,9 +90,10 @@ class MainActivity : Activity() {
 
     private fun refresh() {
         val ok = checkSelfPermission(Manifest.permission.READ_CALL_LOG) == android.content.pm.PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.SEND_SMS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                checkSelfPermission(Manifest.permission.SEND_SMS) == android.content.pm.PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == android.content.pm.PackageManager.PERMISSION_GRANTED
         status.text = "Permissions: " + (if (ok) "granted" else "NOT granted") +
-                "\nAuto-send: " + (if (store.enabled) "ON (checks about every 15 min)" else "OFF") +
+                "\nAuto-send: " + (if (store.enabled) "ON (texts right after each call ends)" else "OFF") +
                 "\n\nRecent activity:"
         logView.text = store.logText().ifEmpty { "(none yet)" }
     }
