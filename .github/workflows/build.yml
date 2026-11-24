@@ -1,5 +1,10 @@
 name: Build APK
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [autotext]
+  workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,3 +17,10 @@ jobs:
         with:
           name: AutoText-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish APK to the apk branch
+        run: |
+          mkdir /tmp/pub && cp app/build/outputs/apk/debug/app-debug.apk /tmp/pub/AutoText.apk
+          cd /tmp/pub && git init -q -b apk
+          git config user.name github-actions && git config user.email actions@github.com
+          git add AutoText.apk && git commit -qm "AutoText APK build"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" apk
