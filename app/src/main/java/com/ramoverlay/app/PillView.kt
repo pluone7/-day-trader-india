@@ -33,7 +33,7 @@ class PillView(ctx: Context) : FrameLayout(ctx) {
     }
     private val done = TextView(ctx).apply {
         text = "✓"
-        setTextColor(Color.GREEN)
+        setTextColor(Color.WHITE)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
         gravity = Gravity.CENTER
         visibility = View.GONE
@@ -48,7 +48,7 @@ class PillView(ctx: Context) : FrameLayout(ctx) {
 
     init {
         background = GradientDrawable().apply {
-            setColor(0xFF111111.toInt())
+            setColor(0xFF3CCB7F.toInt())
             cornerRadius = 1000f
         }
         addView(label, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
