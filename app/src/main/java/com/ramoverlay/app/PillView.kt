@@ -22,6 +22,7 @@ class PillView(ctx: Context) : FrameLayout(ctx) {
     var onMove: ((Int, Int) -> Unit)? = null
     var onResize: ((Int, Int) -> Unit)? = null
     var onDone: (() -> Unit)? = null
+    var onTap: (() -> Unit)? = null
 
     private val dp = ctx.resources.displayMetrics.density
     private val label = TextView(ctx).apply {
@@ -63,7 +64,10 @@ class PillView(ctx: Context) : FrameLayout(ctx) {
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
-        if (!calibrating) return false
+        if (!calibrating) {
+            if (e.actionMasked == MotionEvent.ACTION_UP) onTap?.invoke()
+            return true
+        }
         return drag(e) { dx, dy -> onMove?.invoke(dx, dy) }
     }
 

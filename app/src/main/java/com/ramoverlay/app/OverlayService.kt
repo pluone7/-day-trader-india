@@ -1,11 +1,13 @@
 package com.ramoverlay.app
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.View
@@ -71,6 +73,7 @@ class OverlayService : AccessibilityService() {
             val c = clamped(Bounds(lp.x, lp.y, lp.width + dx, lp.height + dy))
             applyBounds(c)
         }
+        view.onTap = { openBattery() }
         view.onDone = {
             prefs.bounds = Bounds(lp.x, lp.y, lp.width, lp.height)
             applyCalibrating(false)
@@ -125,7 +128,6 @@ class OverlayService : AccessibilityService() {
         val v = pill ?: return
         calibrating = on
         v.calibrating = on
-        lp.flags = flags(touchable = on)
         if (!on) {
             // restore the saved box in case calibration was abandoned
             val b = clamped(prefs.bounds)
@@ -133,6 +135,22 @@ class OverlayService : AccessibilityService() {
         }
         wm.updateViewLayout(v, lp)
         tick(forceText = true)
+    }
+
+    private fun openBattery() {
+        val tries = listOf(
+            Intent(Intent.ACTION_POWER_USAGE_SUMMARY),
+            Intent(Settings.ACTION_BATTERY_SAVER_SETTINGS),
+            Intent(Settings.ACTION_SETTINGS)
+        )
+        for (i in tries) {
+            try {
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(i)
+                return
+            } catch (e: Exception) {
+            }
+        }
     }
 
     private fun shadeOpen(): Boolean = try {
@@ -153,6 +171,12 @@ class OverlayService : AccessibilityService() {
         val vis = if (show) View.VISIBLE else View.GONE
         val becameVisible = v.visibility != vis && show
         if (v.visibility != vis) v.visibility = vis
+        // touchable only while visible, so a hidden pill never swallows taps
+        val wantFlags = flags(touchable = show)
+        if (lp.flags != wantFlags) {
+            lp.flags = wantFlags
+            wm.updateViewLayout(v, lp)
+        }
         if (show && (forceText || becameVisible)) {
             v.setLabel(
                 buildLabel(
