@@ -65,6 +65,10 @@ class MainActivity : Activity() {
                 Toast.makeText(context, "Checking...", Toast.LENGTH_SHORT).show()
             }
         })
+        root.addView(Button(this).apply {
+            text = "WhatsApp batch (next 5 contacts)"
+            setOnClickListener { startActivity(Intent(context, BatchActivity::class.java)) }
+        })
         status = TextView(this).apply { setPadding(0, pad, 0, pad) }
         root.addView(status)
         logView = TextView(this)

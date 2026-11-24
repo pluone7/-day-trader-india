@@ -17,6 +17,20 @@ class Store(ctx: Context) {
         get() = p.getLong("last", System.currentTimeMillis())
         set(v) = p.edit().putLong("last", v).apply()
 
+    // WhatsApp batch settings
+    var waMsg: String
+        get() = p.getString("wa_msg", "Hi!")!!
+        set(v) = p.edit().putString("wa_msg", v).apply()
+    var waBatch: Int
+        get() = p.getInt("wa_batch", 5)
+        set(v) = p.edit().putInt("wa_batch", v.coerceIn(1, 50)).apply()
+    var waCursor: Int
+        get() = p.getInt("wa_cursor", 0)
+        set(v) = p.edit().putInt("wa_cursor", v).apply()
+    var countryCode: String
+        get() = p.getString("wa_cc", "91")!!
+        set(v) = p.edit().putString("wa_cc", v).apply()
+
     fun today(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
     fun key(n: String): String = n.filter { it.isDigit() }.takeLast(10)
 

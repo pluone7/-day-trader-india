@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wa_service_label">AutoText WhatsApp Batch</string>
+    <string name="wa_service_desc">Opens each chat in WhatsApp and taps Send for the AutoText batch. Only acts while you press Send next batch.</string>
+</resources>
